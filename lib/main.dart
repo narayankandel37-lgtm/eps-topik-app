@@ -1,21 +1,20 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const EPSApp());
+  runApp(const EPSTopikApp());
 }
 
-class EPSApp extends StatelessWidget {
-  const EPSApp({super.key});
+class EPSTopikApp extends StatelessWidget {
+  const EPSTopikApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Eps-Topik Nepali Book',
+      title: 'EPS-TOPIK Nepali Book',
       theme: ThemeData(
         primarySwatch: Colors.indigo,
-        scaffoldBackgroundColor: const Color(0xFFF5F7FA),
+        scaffoldBackgroundColor: const Color(0xFFF4F6F9),
         useMaterial3: true,
       ),
       home: const MainHomeScreen(),
@@ -35,34 +34,25 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
 
   final List<Widget> _pages = [
     const HomeDashboardView(),
-    const LeaderboardScreen(),
-    const UBTExamScreen(),
-    const BooksScreen(),
-    const NoticeBoardScreen(),
+    const BookChapterListScreen(),
+    const VocabularyListScreen(),
+    const GrammarListScreen(),
+    const UBTExamPracticeScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 2,
         backgroundColor: const Color(0xFF1565C0),
         foregroundColor: Colors.white,
-        title: Row(
+        title: const Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: Image.asset(
-                'assets/logo.png',
-                width: 32,
-                height: 32,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.school, color: Colors.white),
-              ),
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'EPS-TOPIK Nepali Book',
+            Icon(Icons.menu_book, color: Colors.white),
+            SizedBox(width: 10),
+            Text(
+              'EPS TOPIK Nepali Book',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],
@@ -72,7 +62,7 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: const Color(0xFF1565C0),
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: Colors.grey[600],
         type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
@@ -81,10 +71,10 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: 'Leaderboard'),
+          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Chapters'),
+          BottomNavigationBarItem(icon: Icon(Icons.translate), label: 'Vocab'),
+          BottomNavigationBarItem(icon: Icon(Icons.spellcheck), label: 'Grammar'),
           BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'UBT Exam'),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Books'),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notice'),
         ],
       ),
     );
@@ -98,77 +88,113 @@ class HomeDashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(14.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Banner
+          // Banner Card
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Colors.blue, Colors.indigo]),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF1E88E5), Color(0xFF1565C0)],
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Row(
+            child: const Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(
-                    'assets/logo.png',
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.person, size: 50, color: Colors.white),
-                  ),
+                CircleAvatar(
+                  radius: 28,
+                  backgroundColor: Colors.white24,
+                  child: Icon(Icons.school, size: 36, color: Colors.white),
                 ),
-                const SizedBox(width: 16),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Welcome Student', style: TextStyle(color: Colors.white70, fontSize: 14)),
-                    Text('EPS-TOPIK Nepal', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                  ],
+                SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('EPS-TOPIK Self Study', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                      Text('नेपाली व्याख्या सहित पाठ्यपुस्तक', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
 
-          // Main Categories
+          const Text('📚 Study Sections', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF1565C0))),
+          const SizedBox(height: 10),
+
+          // Main Action Cards
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildCategoryBtn(context, Icons.menu_book, 'Books', Colors.orange, const BooksScreen()),
-              _buildCategoryBtn(context, Icons.translate, 'Vocabulary', Colors.pink, const VocabularyScreen()),
-              _buildCategoryBtn(context, Icons.spellcheck, 'Grammar', Colors.purple, const GrammarScreen()),
-              _buildCategoryBtn(context, Icons.style, 'Flash Card', Colors.teal, const FlashCardScreen()),
+              _buildFeatureCard(
+                context,
+                title: 'Book 1 (1-30)',
+                subtitle: 'भाग १ पाठ्यपुस्तक',
+                icon: Icons.menu_book,
+                color: Colors.orange,
+                target: const BookChapterListScreen(),
+              ),
+              const SizedBox(width: 10),
+              _buildFeatureCard(
+                context,
+                title: 'Book 2 (31-60)',
+                subtitle: 'भाग २ पाठ्यपुस्तक',
+                icon: Icons.auto_stories,
+                color: Colors.teal,
+                target: const BookChapterListScreen(),
+              ),
             ],
           ),
-          const SizedBox(height: 24),
-
-          // Exam Section
-          const Text('📝 Exam & Practice', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1565C0))),
           const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: const Color(0xFFE3F2FD), borderRadius: BorderRadius.circular(16)),
-            child: GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 3,
-              childAspectRatio: 1,
-              children: [
-                _buildGridTile(context, Icons.computer, 'UBT-EXAM', () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const UBTExamScreen()));
-                }),
-                _buildGridTile(context, Icons.quiz, 'Word Quiz', () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const WordQuizScreen()));
-                }),
-                _buildGridTile(context, Icons.forum, 'Dialogue Practice', () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const DialogueScreen()));
-                }),
-              ],
+          Row(
+            children: [
+              _buildFeatureCard(
+                context,
+                title: 'Vocabulary',
+                subtitle: 'महत्वपूर्ण शब्दार्थ',
+                icon: Icons.translate,
+                color: Colors.pink,
+                target: const VocabularyListScreen(),
+              ),
+              const SizedBox(width: 10),
+              _buildFeatureCard(
+                context,
+                title: 'Grammar Rules',
+                subtitle: 'व्याकरण नियम',
+                icon: Icons.spellcheck,
+                color: Colors.purple,
+                target: const GrammarListScreen(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          const Text('📝 Exam & Flashcards', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF1565C0))),
+          const SizedBox(height: 10),
+
+          Card(
+            elevation: 1,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: ListTile(
+              leading: const CircleAvatar(backgroundColor: Colors.indigoAccent, child: Icon(Icons.style, color: Colors.white)),
+              title: const Text('Flash Cards', style: TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: const Text('शब्दार्थ सम्झिने सजिलो तरिका'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FlashCardScreen())),
+            ),
+          ),
+          Card(
+            elevation: 1,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: ListTile(
+              leading: const CircleAvatar(backgroundColor: Colors.green, child: Icon(Icons.computer, color: Colors.white)),
+              title: const Text('UBT Model Exam', style: TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: const Text('वास्तविक परीक्षा जस्तै अभ्यास'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const UBTExamPracticeScreen())),
             ),
           ),
         ],
@@ -176,60 +202,84 @@ class HomeDashboardView extends StatelessWidget {
     );
   }
 
-  static Widget _buildCategoryBtn(BuildContext context, IconData icon, String title, Color color, Widget screen) {
-    return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
-      child: Column(
-        children: [
-          CircleAvatar(radius: 26, backgroundColor: color.withOpacity(0.2), child: Icon(icon, color: color, size: 28)),
-          const SizedBox(height: 6),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-        ],
-      ),
-    );
-  }
-
-  static Widget _buildGridTile(BuildContext context, IconData icon, String title, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(radius: 22, backgroundColor: Colors.white, child: Icon(icon, color: Colors.blueAccent, size: 24)),
-          const SizedBox(height: 6),
-          Text(title, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
-        ],
+  static Widget _buildFeatureCard(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required Widget target,
+  }) {
+    return Expanded(
+      child: InkWell(
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => target)),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 4, spreadRadius: 1),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(backgroundColor: color.withOpacity(0.15), child: Icon(icon, color: color)),
+              const SizedBox(height: 10),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+              const SizedBox(height: 4),
+              Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-// ================= 2. VOCABULARY SCREEN =================
-class VocabularyScreen extends StatelessWidget {
-  const VocabularyScreen({super.key});
+// ================= 2. CHAPTERS LIST SCREEN =================
+class BookChapterListScreen extends StatelessWidget {
+  const BookChapterListScreen({super.key});
 
-  final List<Map<String, String>> words = const [
-    {"kr": "한국 (Hanguk)", "np": "कोरिया (Korea)"},
-    {"kr": "선생님 (Seonsaengnim)", "np": "शिक्षक (Teacher)"},
-    {"kr": "학생 (Hakseang)", "np": "विद्यार्थी (Student)"},
-    {"kr": "회사원 (Hoesawon)", "np": "कम्पनी कर्मचारी (Company Worker)"},
-    {"kr": "의사 (Uisa)", "np": "डाक्टर (Doctor)"},
-    {"kr": "경찰관 (Gyeongchalgwan)", "np": "प्रहरी (Police)"},
+  final List<Map<String, String>> chapters = const [
+    {"num": "1", "title": "안녕하세요 (नमस्कार)", "sub": "기본 인사 (साधारण अभिवादन)"},
+    {"num": "2", "title": "이게 뭐예요? (यो के हो?)", "sub": "물건 (सामग्रीहरू)"},
+    {"num": "3", "title": "교실 한국어 (कक्षाकोठाको कोरियाली)", "sub": "수업 (कक्षा सम्बन्धी)"},
+    {"num": "4", "title": "주말 잘 보내세요 (वीकएन्ड राम्रोसँग बिताउनुहोस्)", "sub": "인사말 (अभिवादन)"},
+    {"num": "5", "title": "반갑습니다 (भेटेर खुसी लाग्यो)", "sub": "자기소개 (आत्म-परिचय)"},
+    {"num": "6", "title": "저는 이민우입니다 (म इ-मिन-उ हुँ)", "sub": "국적/직업 (राष्ट्रियता र पेशा)"},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Korean Vocabulary (शब्दार्थ)')),
+      appBar: AppBar(title: const Text('EPS TOPIK Chapters')),
       body: ListView.builder(
-        itemCount: words.length,
+        padding: const EdgeInsets.all(10),
+        itemCount: chapters.length,
         itemBuilder: (context, index) {
+          final item = chapters[index];
           return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            elevation: 1,
+            margin: const EdgeInsets.symmetric(vertical: 5),
             child: ListTile(
-              leading: CircleAvatar(child: Text('${index + 1}')),
-              title: Text(words[index]['kr']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              subtitle: Text(words[index]['np']!, style: const TextStyle(fontSize: 16, color: Colors.blueGrey)),
+              leading: CircleAvatar(
+                backgroundColor: Colors.indigo,
+                child: Text(item['num']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              ),
+              title: Text('과 ${item['num']}: ${item['title']!}', style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text(item['sub']!),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChapterDetailScreen(chapterTitle: '과 ${item['num']}: ${item['title']!}'),
+                  ),
+                );
+              },
             ),
           );
         },
@@ -238,36 +288,139 @@ class VocabularyScreen extends StatelessWidget {
   }
 }
 
-// ================= 3. GRAMMAR SCREEN =================
-class GrammarScreen extends StatelessWidget {
-  const GrammarScreen({super.key});
+class ChapterDetailScreen extends StatelessWidget {
+  final String chapterTitle;
+  const ChapterDetailScreen({super.key, required this.chapterTitle});
 
-  final List<Map<String, String>> grammars = const [
-    {"title": "입니다 / 입니까?", "desc": "हो / हो? (Is / Are / Am)", "eg": "저는 학생입니다. (म विद्यार्थी हुँ।)"},
-    {"title": "이/가", "desc": "कर्ता कारक (Subject Particle)", "eg": "가방이 있습니다. (झोला छ।)"},
-    {"title": "을/를", "desc": "कर्म कारक (Object Particle)", "eg": "밥을 먹습니다. (भात खान्छु।)"},
-    {"title": "에 / 에서", "desc": "मा / बाट (In, At, To / From)", "eg": "학교에 갑니다. (स्कूल जान्छु।)"},
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(chapterTitle)),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: const [
+            Text('📌 Dialogue 1 (बातचीत १)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.indigo)),
+            SizedBox(height: 8),
+            Card(
+              elevation: 1,
+              child: Padding(
+                padding: EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('가: 안녕하세요? (नमस्कार?)', style: TextStyle(fontSize: 16)),
+                    Divider(),
+                    Text('나: 네, 안녕하세요. (हो, नमस्कार।)', style: TextStyle(fontSize: 16)),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            Text('📖 Vocabulary (शब्दार्थ)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.indigo)),
+            SizedBox(height: 8),
+            Card(
+              elevation: 1,
+              child: ListTile(
+                title: Text('선생님 - शिक्षक'),
+                subtitle: Text('학생 - विद्यार्थी'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ================= 3. VOCABULARY SCREEN =================
+class VocabularyListScreen extends StatelessWidget {
+  const VocabularyListScreen({super.key});
+
+  final List<Map<String, String>> vocabs = const [
+    {"kr": "한국", "np": "कोरिया (Korea)"},
+    {"kr": "선생님", "np": "शिक्षक (Teacher)"},
+    {"kr": "학생", "np": "विद्यार्थी (Student)"},
+    {"kr": "회사원", "np": "कम्पनी कर्मचारी (Office Worker)"},
+    {"kr": "의사", "np": "डाक्टर (Doctor)"},
+    {"kr": "경찰관", "np": "प्रहरी (Police Officer)"},
+    {"kr": "요리사", "np": "भान्से (Chef)"},
+    {"kr": "운전기사", "np": "चालक (Driver)"},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('EPS Grammar (व्याकरण)')),
+      appBar: AppBar(title: const Text('Vocabulary (शब्दार्थ)')),
+      body: ListView.builder(
+        itemCount: vocabs.length,
+        itemBuilder: (context, index) {
+          return Card(
+            elevation: 1,
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.indigo[50],
+                child: Text('${index + 1}', style: const TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold)),
+              ),
+              title: Text(vocabs[index]['kr']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              subtitle: Text(vocabs[index]['np']!, style: const TextStyle(fontSize: 15, color: Colors.black87)),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ================= 4. GRAMMAR SCREEN =================
+class GrammarListScreen extends StatelessWidget {
+  const GrammarListScreen({super.key});
+
+  final List<Map<String, String>> grammars = const [
+    {
+      "title": "입니다 / 입니까?",
+      "meaning": "हो / हो? (Is / Are / Am)",
+      "desc": "명사 뒤에 붙어서 문장의 주어를 설명할 때 사용합니다.\n(नाउनको पछाडि जोडिएर वाक्य पूरा गर्न प्रयोग गरिन्छ।)",
+      "example": "저는 학생입니다. (म विद्यार्थी हुँ।)"
+    },
+    {
+      "title": "이 / 가",
+      "meaning": "ले / - (Subject Particle)",
+      "desc": "문장의 주어를 나타내는 조사입니다.\n(वाक्यको कर्ता (Subject) जनाउन प्रयोग गरिन्छ।)",
+      "example": "가방이 있습니다. (झोला छ।)"
+    },
+    {
+      "title": "을 / 를",
+      "meaning": "लाई (Object Particle)",
+      "desc": "문장의 목적어를 나타내는 조사입니다.\n(वाक्यको कर्म (Object) जनाउन प्रयोग गरिन्छ।)",
+      "example": "밥을 먹습니다. (भात खान्छु।)"
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Korean Grammar (व्याकरण)')),
       body: ListView.builder(
         itemCount: grammars.length,
         itemBuilder: (context, index) {
+          final item = grammars[index];
           return Card(
+            elevation: 1,
             margin: const EdgeInsets.all(10),
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(14.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(grammars[index]['title']!, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.indigo)),
-                  const SizedBox(height: 5),
-                  Text("अर्थ: ${grammars[index]['desc']!}", style: const TextStyle(fontSize: 16)),
-                  const Divider(),
-                  Text("उदाहरण: ${grammars[index]['eg']!}", style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.green)),
+                  Text(item['title']!, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.indigo)),
+                  const SizedBox(height: 4),
+                  Text("अर्थ: ${item['meaning']!}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.deepOrange)),
+                  const SizedBox(height: 8),
+                  Text(item['desc']!, style: const TextStyle(fontSize: 14, color: Colors.black87)),
+                  const Divider(height: 20),
+                  Text("उदाहरण: ${item['example']!}", style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.green)),
                 ],
               ),
             ),
@@ -278,7 +431,7 @@ class GrammarScreen extends StatelessWidget {
   }
 }
 
-// ================= 4. FLASH CARD SCREEN =================
+// ================= 5. FLASH CARDS =================
 class FlashCardScreen extends StatefulWidget {
   const FlashCardScreen({super.key});
 
@@ -311,27 +464,47 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
                 width: 280,
                 height: 180,
                 alignment: Alignment.center,
-                decoration: BoxDecoration(color: Colors.amber[100], borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.amber, width: 2)),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: _showMeaning ? Colors.green[50] : Colors.amber[50],
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _showMeaning ? Colors.green : Colors.amber, width: 2),
+                ),
                 child: Text(
                   _showMeaning ? cards[_currentIndex]['np']! : cards[_currentIndex]['kr']!,
-                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: _showMeaning ? Colors.green[900] : Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            const Text("अर्थ हेर्न कार्डमा थिच्नुहोस् (Tap to see meaning)", style: TextStyle(color: Colors.grey)),
+            const SizedBox(height: 12),
+            const Text("अर्थ हेर्न कार्डमा थिच्नुहोस् (Tap to Flip)", style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: _currentIndex > 0 ? () => setState(() { _currentIndex--; _showMeaning = false; }) : null,
-                  child: const Text('अघिल्लो (Prev)'),
+                  onPressed: _currentIndex > 0
+                      ? () => setState(() {
+                            _currentIndex--;
+                            _showMeaning = false;
+                          })
+                      : null,
+                  child: const Text('Previous'),
                 ),
                 const SizedBox(width: 20),
                 ElevatedButton(
-                  onPressed: _currentIndex < cards.length - 1 ? () => setState(() { _currentIndex++; _showMeaning = false; }) : null,
-                  child: const Text('पछिल्लो (Next)'),
+                  onPressed: _currentIndex < cards.length - 1
+                      ? () => setState(() {
+                            _currentIndex++;
+                            _showMeaning = false;
+                          })
+                      : null,
+                  child: const Text('Next'),
                 ),
               ],
             )
@@ -342,48 +515,17 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
   }
 }
 
-// ================= 5. BOOKS SCREEN =================
-class BooksScreen extends StatelessWidget {
-  const BooksScreen({super.key});
+// ================= 6. UBT EXAM PRACTICE =================
+class UBTExamPracticeScreen extends StatefulWidget {
+  const UBTExamPracticeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('EPS TOPIK Textbooks')),
-      body: ListView(
-        padding: const EdgeInsets.all(12),
-        children: [
-          _buildBookTile('Book 1 (Chapter 1 - 30)', 'मूलभूत कोरियाली भाषा पाठ्यपुस्तक - १'),
-          _buildBookTile('Book 2 (Chapter 31 - 60)', 'उन्नत कोरियाली भाषा पाठ्यपुस्तक - २'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBookTile(String title, String sub) {
-    return Card(
-      child: ListTile(
-        leading: const Icon(Icons.menu_book, color: Colors.blue, size: 36),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(sub),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: () {},
-      ),
-    );
-  }
+  State<UBTExamPracticeScreen> createState() => _UBTExamPracticeScreenState();
 }
 
-// ================= 6. UBT EXAM SCREEN =================
-class UBTExamScreen extends StatefulWidget {
-  const UBTExamScreen({super.key});
-
-  @override
-  State<UBTExamScreen> createState() => _UBTExamScreenState();
-}
-
-class _UBTExamScreenState extends State<UBTExamScreen> {
+class _UBTExamPracticeScreenState extends State<UBTExamPracticeScreen> {
   int _currentQuestionIndex = 0;
-  final Map<int, int> _userAnswers = {};
+  final Map<int, int> _selectedAnswers = {};
 
   final List<Map<String, dynamic>> _questions = [
     {
@@ -400,71 +542,18 @@ class _UBTExamScreenState extends State<UBTExamScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentQ = _questions[_currentQuestionIndex];
+    final q = _questions[_currentQuestionIndex];
     return Scaffold(
-      appBar: AppBar(title: const Text('EPS UBT Exam')),
+      appBar: AppBar(title: const Text('EPS UBT Model Exam')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('प्रश्नोत्तर ${_currentQuestionIndex + 1}/${_questions.length}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text('प्रश्न ${_currentQuestionIndex + 1}/${_questions.length}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo)),
             const SizedBox(height: 10),
-            Text(currentQ['question'], style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: currentQ['options'].length,
-                itemBuilder: (context, index) {
-                  return RadioListTile<int>(
-                    title: Text(currentQ['options'][index]),
-                    value: index,
-                    groupValue: _userAnswers[_currentQuestionIndex],
-                    onChanged: (val) {
-                      setState(() { _userAnswers[_currentQuestionIndex] = val!; });
-                    },
-                  );
-                },
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_currentQuestionIndex < _questions.length - 1) {
-                  setState(() => _currentQuestionIndex++);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Exam Submit भयो!')));
-                }
-              },
-              child: Text(_currentQuestionIndex == _questions.length - 1 ? 'Submit' : 'Next'),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ================= OTHER SCREENS =================
-class WordQuizScreen extends StatelessWidget {
-  const WordQuizScreen({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Word Quiz')), body: const Center(child: Text('Quiz system ready!')));
-}
-
-class DialogueScreen extends StatelessWidget {
-  const DialogueScreen({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Dialogue Practice')), body: const Center(child: Text('대화 (Dialogue) Section')));
-}
-
-class LeaderboardScreen extends StatelessWidget {
-  const LeaderboardScreen({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Leaderboard')), body: const Center(child: Text('🏆 Top Ranking Students')));
-}
-
-class NoticeBoardScreen extends StatelessWidget {
-  const NoticeBoardScreen({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Notice Board')), body: const Center(child: Text('🔔 No new notice available.')));
-}
+            Container(
+              padding: const EdgeInsets.all(12),
+              width: double.infinity,
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+         
